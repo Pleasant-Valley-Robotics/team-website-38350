@@ -1,0 +1,28 @@
+# Runs on every pull request and every push to main: the site must build,
+# and the server's container must build, before a change can be merged.
+# This only checks. The robotics server pulls and deploys by itself.
+name: Check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Build the container the server will run
+        run: docker build -t team-website .
+      - name: Start it and ask its health check
+        run: |
+          docker run -d --name site -p 8080:80 team-website
+          for i in $(seq 1 20); do curl -fsS http://127.0.0.1:8080/healthz && exit 0; sleep 1; done
+          docker logs site; exit 1

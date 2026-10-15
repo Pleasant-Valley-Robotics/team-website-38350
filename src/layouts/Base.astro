@@ -1,0 +1,92 @@
+---
+import '../styles/global.css';
+import { getTeam, PV_SITE } from '../team';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const t = (await getTeam()).data;
+const { title, description = `${t.program} Team #${t.number} ${t.name} at Pleasant Valley High School. ${t.tagline}` } = Astro.props;
+const fullTitle = title ? `${title} | ${t.name}` : `${t.name} | ${t.program} #${t.number}`;
+const year = new Date().getFullYear();
+
+// Pages listed here appear in the menu. Add a line when you add a page in src/pages/.
+const nav = [
+  { label: 'Home', href: '/' },
+];
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href={t.logo} />
+    <meta name="theme-color" content="#070b1f" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+  </head>
+  <body style={`--accent: ${t.accent}`}>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="header">
+      <div class="container bar">
+        <a class="brand" href="/">
+          <img src={t.logo} alt="" width="40" height="40" style={`background: ${t.logoBg}`} />
+          <span>{t.name}</span>
+        </a>
+        <nav aria-label="Main">
+          <ul>
+            {nav.map((item) => (
+              <li><a href={item.href} aria-current={path === item.href ? 'page' : undefined}>{item.label}</a></li>
+            ))}
+            <li><a href={PV_SITE}>PV Robotics ↗</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+    <footer class="footer">
+      <div class="container inner">
+        <a class="pv" href={PV_SITE}>
+          <img src="/images/pv-logo.png" alt="" width="44" height="44" />
+          <span>Part of Pleasant Valley FIRST Robotics</span>
+        </a>
+        <img class="first" src="/images/first-logo.png" alt="FIRST" width="111" height="70" />
+      </div>
+      <div class="container legal muted">© {year} {t.name} · {t.program} Team #{t.number}</div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .skip { position: absolute; left: 1rem; top: -3rem; z-index: 100; background: var(--cyan); color: #050816; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; }
+  .skip:focus { top: 1rem; }
+
+  .header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgb(7 11 31 / 0.82);
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 68px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 0.65rem; text-decoration: none; color: var(--text); font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; }
+  .brand img { width: 40px; height: 40px; border-radius: 10px; object-fit: contain; padding: 3px; }
+  nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.25rem; }
+  nav a { display: block; color: var(--muted); text-decoration: none; font-weight: 500; padding: 0.45rem 0.85rem; border-radius: 999px; }
+  nav a:hover, nav a[aria-current='page'] { color: var(--text); background: rgb(255 255 255 / 0.06); }
+
+  .footer { border-top: 1px solid var(--border); background: var(--bg-2); padding-top: 2.5rem; margin-top: 2rem; }
+  .inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem; }
+  .pv { display: flex; align-items: center; gap: 0.75rem; color: var(--text); text-decoration: none; font-weight: 600; }
+  .pv img { border-radius: 50%; background: #fff; }
+  .first { background: #fff; border-radius: 10px; padding: 6px 10px; }
+  .legal { padding-block: 1.5rem; margin-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.875rem; }
+</style>
