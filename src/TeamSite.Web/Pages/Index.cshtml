@@ -1,6 +1,16 @@
 @page
 @{
     ViewData["Title"] = "Home";
+
+    // The team calendar. Each event is one line: its date (year, month, day), what it is, and where.
+    // To add an event, copy the example line, take the two slashes off the front, and change it.
+    // No place yet? Write null instead of the place, without quotes.
+    // Events that have passed leave the page by themselves; the rest show soonest first.
+    var events = new (DateOnly Date, string Title, string? Place)[]
+    {
+        // (new DateOnly(2026, 1, 31), "Event name", "Where it is"),
+    };
+    var upcoming = events.Where(e => e.Date >= DateOnly.FromDateTime(DateTime.Now)).OrderBy(e => e.Date).ToList();
 }
 @*
     The home page: https://38350.firstpvrobotics.com/
@@ -11,12 +21,10 @@
 <section class="team-hero">
     <div class="container hero-grid">
         <div>
-            <!-- FTC or FRC, your team number, and the year you started. -->
+            <!-- FTC or FRC and your team number. -->
             <span class="eyebrow">FTC Team #38350</span>
             <!-- Your team's name. -->
             <h1>Prime Suspects</h1>
-            <!-- One sentence about what your team is about. -->
-            <p class="tagline">Pleasant Valley's newest FTC team, on the case.</p>
         </div>
         <!-- Your logo, in wwwroot/images/. Use background: #000000 for logos drawn on black. -->
         <div class="hero-logo" style="background: #000000">
@@ -26,16 +34,53 @@
 </section>
 
 <section class="section">
-    <div class="container story">
-        <!-- Your team's story. One <p> per paragraph. -->
+    <div class="container">
+        <h2>About the team</h2>
+        <!-- A short summary of your team. One <p> per paragraph. -->
         <div class="prose">
-            <p>Prime Suspects is FTC Team #38350, the newest FIRST Tech Challenge team at Pleasant Valley High School. Like our other teams, Prime Suspects students design, build and program a competition robot while learning teamwork, problem solving and communication along the way.</p>
-            <p>More about the team, its members' goals and its outreach is coming soon.</p>
+            <p>Prime Suspects is <em>FIRST</em> Tech Challenge Team #38350 at Pleasant Valley High School. It is the school's newest <em>FIRST</em> Tech Challenge team. It is part of Pleasant Valley <em>FIRST</em> Robotics.</p>
         </div>
-        <aside class="card connect">
-            <h3>Connect with Prime Suspects</h3>
-            <!-- Replace this with your email address and account links when you have them. -->
-            <p class="muted">Coming soon.</p>
-        </aside>
+    </div>
+</section>
+
+<section class="section section--alt">
+    <div class="container">
+        <h2>Follow us</h2>
+        <!-- Your team has no accounts of its own yet, so this links to the program's.
+             When it has some, replace these lines with a list like the other team sites'. -->
+        <p class="muted">Follow the program:</p>
+        <ul class="pills">
+            <li><a href="https://www.firstpvrobotics.com">Pleasant Valley <em>FIRST</em> Robotics</a></li>
+        </ul>
+    </div>
+</section>
+
+<!-- The team calendar. To add an event, go to the list at the very top of this file
+     and copy the example line, like this one, then change the date, the name and the place:
+         (new DateOnly(2026, 1, 31), "Event name", "Where it is"),
+     This part shows the events; you don't need to change it. -->
+<section class="section">
+    <div class="container">
+        <h2>Team calendar</h2>
+        @if (upcoming.Count == 0)
+        {
+            <p class="muted">No events scheduled yet.</p>
+        }
+        else
+        {
+            <div class="grid grid--3">
+                @foreach (var e in upcoming)
+                {
+                    <div class="card item">
+                        <span class="eyebrow"><time datetime="@e.Date.ToString("yyyy-MM-dd")">@e.Date.ToString("dddd, MMMM d, yyyy", System.Globalization.CultureInfo.InvariantCulture)</time></span>
+                        <h3>@e.Title</h3>
+                        @if (e.Place is not null)
+                        {
+                            <p class="muted">@e.Place</p>
+                        }
+                    </div>
+                }
+            </div>
+        }
     </div>
 </section>
