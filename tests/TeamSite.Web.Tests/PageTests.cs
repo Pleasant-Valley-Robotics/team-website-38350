@@ -1,5 +1,7 @@
 using System.Net;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
 using TeamSite.Web.Data;
 
 namespace TeamSite.Web.Tests;
@@ -52,5 +54,14 @@ public class PageTests(WebApplicationFactory<Program> factory) : IClassFixture<W
             var response = await _client.GetAsync(href);
             Assert.True(response.StatusCode == HttpStatusCode.OK, $"The menu link \"{label}\" goes to {href}, which answered {(int)response.StatusCode}");
         }
+    }
+
+    [Fact]
+    public void Pages_folder_is_switched_on()
+    {
+        // A .cshtml file in Pages/ only becomes a page if Program.cs calls MapRazorPages().
+        // There is no page in Pages/ yet, so this checks the switch itself is there.
+        var endpoints = (CompositeEndpointDataSource)factory.Services.GetRequiredService<EndpointDataSource>();
+        Assert.Contains(endpoints.DataSources, d => d.GetType().Name == "PageActionEndpointDataSource");
     }
 }

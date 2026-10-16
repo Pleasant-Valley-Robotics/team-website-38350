@@ -8,6 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 // MVC: Controllers pick the data, Views turn it into HTML.
 builder.Services.AddControllersWithViews();
 
+// Razor Pages: a .cshtml file in Pages/ is a page of its own, its address from its
+// file name (Pages/Robot.cshtml is /robot). Both kinds of page work side by side.
+builder.Services.AddRazorPages();
+
 // /healthz answers "Healthy" when the site is running. The robotics server asks it
 // before it switches visitors to a new release.
 builder.Services.AddHealthChecks();
@@ -43,6 +47,9 @@ app.MapHealthChecks("/healthz");
 
 // Every page's address is written on its controller action with [Route("...")].
 app.MapControllers();
+
+// Pages/Robot.cshtml is "/robot", and so on.
+app.MapRazorPages();
 
 app.Run();
 
