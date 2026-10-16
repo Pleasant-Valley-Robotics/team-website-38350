@@ -1,16 +1,6 @@
 @page
 @{
     ViewData["Title"] = "Home";
-
-    // The team calendar. Each event is one line: its date (year, month, day), what it is, and where.
-    // To add an event, copy the example line, take the two slashes off the front, and change it.
-    // No place yet? Write null instead of the place, without quotes.
-    // Events that have passed leave the page by themselves; the rest show soonest first.
-    var events = new (DateOnly Date, string Title, string? Place)[]
-    {
-        // (new DateOnly(2026, 1, 31), "Event name", "Where it is"),
-    };
-    var upcoming = events.Where(e => e.Date >= DateOnly.FromDateTime(DateTime.Now)).OrderBy(e => e.Date).ToList();
 }
 @*
     The home page: https://38350.firstpvrobotics.com/
@@ -52,35 +42,5 @@
         <ul class="pills">
             <li><a href="https://www.firstpvrobotics.com">Pleasant Valley <em>FIRST</em> Robotics</a></li>
         </ul>
-    </div>
-</section>
-
-<!-- The team calendar. To add an event, go to the list at the very top of this file
-     and copy the example line, like this one, then change the date, the name and the place:
-         (new DateOnly(2026, 1, 31), "Event name", "Where it is"),
-     This part shows the events; you don't need to change it. -->
-<section class="section">
-    <div class="container">
-        <h2>Team calendar</h2>
-        @if (upcoming.Count == 0)
-        {
-            <p class="muted">No events scheduled yet.</p>
-        }
-        else
-        {
-            <div class="grid grid--3">
-                @foreach (var e in upcoming)
-                {
-                    <div class="card item">
-                        <span class="eyebrow"><time datetime="@e.Date.ToString("yyyy-MM-dd")">@e.Date.ToString("dddd, MMMM d, yyyy", System.Globalization.CultureInfo.InvariantCulture)</time></span>
-                        <h3>@e.Title</h3>
-                        @if (e.Place is not null)
-                        {
-                            <p class="muted">@e.Place</p>
-                        }
-                    </div>
-                }
-            </div>
-        }
     </div>
 </section>
