@@ -1,8 +1,6 @@
 using System.Net;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.DependencyInjection;
-using TeamSite.Web.Data;
 
 namespace TeamSite.Web.Tests;
 
@@ -16,16 +14,49 @@ public class PageTests(WebApplicationFactory<Program> factory) : IClassFixture<W
 {
     private readonly HttpClient _client = factory.CreateClient();
 
-    [Fact]
-    public async Task Home_page_shows_the_team()
+    // The home page as a visitor gets it, without the <!-- notes --> (they aren't shown).
+    private async Task<string> HomePage()
     {
         var response = await _client.GetAsync("/");
-
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        // Razor writes some characters as HTML codes (' becomes &#x27;), so decode before comparing.
-        var html = WebUtility.HtmlDecode(await response.Content.ReadAsStringAsync());
-        Assert.Contains(TeamInfo.Team.Name, html);
-        Assert.Contains($"#{TeamInfo.Team.Number}", html);
+        return Regex.Replace(await response.Content.ReadAsStringAsync(), "<!--.*?-->", "", RegexOptions.Singleline);
+    }
+
+    [Fact]
+    public async Task Home_page_shows_with_its_menu()
+    {
+        var html = await HomePage();
+
+        Assert.Contains("<h1>", html);
+        Assert.Contains("<nav", html);
+    }
+
+    [Fact]
+    public async Task Every_menu_link_works()
+    {
+        // Reads the menu from the home page, so a link added to _Layout.cshtml is checked too.
+        var nav = Regex.Match(await HomePage(), "<nav.*?</nav>", RegexOptions.Singleline).Value;
+        var links = Regex.Matches(nav, "href=\"([^\"]+)\"").Select(m => m.Groups[1].Value).ToList();
+        Assert.NotEmpty(links);
+
+        // Links to other websites (https://...) aren't ours to check.
+        foreach (var href in links.Where(h => h.StartsWith('/')))
+        {
+            var response = await _client.GetAsync(href);
+            Assert.True(response.StatusCode == HttpStatusCode.OK, $"The menu links to {href}, which answered {(int)response.StatusCode}. Is there a page for it in Pages/?");
+        }
+    }
+
+    [Fact]
+    public async Task Every_picture_on_the_home_page_exists()
+    {
+        var images = Regex.Matches(await HomePage(), "src=\"(/[^\"]+)\"").Select(m => m.Groups[1].Value).Distinct();
+
+        foreach (var src in images)
+        {
+            var response = await _client.GetAsync(src);
+            Assert.True(response.StatusCode == HttpStatusCode.OK, $"The home page shows {src}, but there is no such file in wwwroot/.");
+        }
     }
 
     [Fact]
@@ -44,24 +75,5 @@ public class PageTests(WebApplicationFactory<Program> factory) : IClassFixture<W
         var response = await _client.GetAsync("/healthz");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-    }
-
-    [Fact]
-    public async Task Every_menu_link_works()
-    {
-        foreach (var (label, href) in TeamInfo.Nav)
-        {
-            var response = await _client.GetAsync(href);
-            Assert.True(response.StatusCode == HttpStatusCode.OK, $"The menu link \"{label}\" goes to {href}, which answered {(int)response.StatusCode}");
-        }
-    }
-
-    [Fact]
-    public void Pages_folder_is_switched_on()
-    {
-        // A .cshtml file in Pages/ only becomes a page if Program.cs calls MapRazorPages().
-        // There is no page in Pages/ yet, so this checks the switch itself is there.
-        var endpoints = (CompositeEndpointDataSource)factory.Services.GetRequiredService<EndpointDataSource>();
-        Assert.Contains(endpoints.DataSources, d => d.GetType().Name == "PageActionEndpointDataSource");
     }
 }

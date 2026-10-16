@@ -1,15 +1,11 @@
-// Program.cs is where the website starts. It sets up the services the site uses,
-// then lists, in order, what happens to every request that comes in.
+// Program.cs is where the website starts. You don't need to change it to change
+// the words on a page or to add a page: that is all done in the Pages/ folder.
 
 using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// MVC: Controllers pick the data, Views turn it into HTML.
-builder.Services.AddControllersWithViews();
-
-// Razor Pages: a .cshtml file in Pages/ is a page of its own, its address from its
-// file name (Pages/Robot.cshtml is /robot). Both kinds of page work side by side.
+// Razor Pages: every .cshtml file in Pages/ is a page of the site.
 builder.Services.AddRazorPages();
 
 // /healthz answers "Healthy" when the site is running. The robotics server asks it
@@ -31,11 +27,11 @@ app.UseForwardedHeaders();
 
 if (!app.Environment.IsDevelopment())
 {
-    // A crash shows a friendly page instead of the error details.
+    // A crash shows a friendly page (Pages/Error.cshtml) instead of the error details.
     app.UseExceptionHandler("/error");
 }
 
-// A page that doesn't exist shows our 404 page (ErrorsController.NotFoundPage).
+// A page that doesn't exist shows our 404 page (Pages/NotFound.cshtml).
 app.UseStatusCodePagesWithReExecute("/not-found");
 
 // Files in wwwroot/ (CSS, images, fonts) are sent as they are.
@@ -45,10 +41,7 @@ app.UseRouting();
 
 app.MapHealthChecks("/healthz");
 
-// Every page's address is written on its controller action with [Route("...")].
-app.MapControllers();
-
-// Pages/Robot.cshtml is "/robot", and so on.
+// Pages/Index.cshtml is "/", Pages/Robot.cshtml is "/robot", and so on.
 app.MapRazorPages();
 
 app.Run();
