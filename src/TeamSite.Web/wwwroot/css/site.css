@@ -1,6 +1,6 @@
 /* Team site styles.
    The colors at the top (:root) are used everywhere; change them there.
-   Sections below follow the order of the views: layout, shared pieces, then each page. */
+   Sections below follow the order of the pages: layout, shared pieces, then each page. */
 
 @font-face {
   font-family: 'Inter Variable';
@@ -157,7 +157,7 @@ p { margin: 0 0 1em; text-wrap: pretty; }
 .footer-first { background: #fff; border-radius: 10px; padding: 6px 10px; }
 .legal { padding-block: 1.5rem; margin-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.875rem; }
 
-/* ---------- Team page (Views/Home/Index.cshtml) ---------- */
+/* ---------- Team page (Pages/Index.cshtml) ---------- */
 .team-hero {
   padding-block: clamp(56px, 9vw, 110px) clamp(48px, 7vw, 80px);
   background:
