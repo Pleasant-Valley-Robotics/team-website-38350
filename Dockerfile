@@ -1,15 +1,18 @@
-# Step 1: build the site into plain files.
-FROM node:22-alpine AS build
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
-COPY . .
-ARG SITE_URL
-ENV SITE_URL=$SITE_URL
-RUN npm run build
+# Step 1: compile the site with the .NET SDK.
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /src
+# Restore packages first, so this slow step is reused when only code changes.
+COPY src/TeamSite.Web/TeamSite.Web.csproj src/TeamSite.Web/
+RUN dotnet restore src/TeamSite.Web/TeamSite.Web.csproj
+COPY src/ src/
+RUN dotnet publish src/TeamSite.Web/TeamSite.Web.csproj -c Release -o /app --no-restore
 
-# Step 2: serve those files with nginx. Nothing from step 1 but dist/ is kept.
-FROM nginx:1.27-alpine
-COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /app/dist /usr/share/nginx/html
-EXPOSE 80
+# Step 2: run it on the smaller ASP.NET runtime image. Only the compiled site is kept.
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
+WORKDIR /app
+COPY --from=build /app .
+ENV ASPNETCORE_HTTP_PORTS=8080
+EXPOSE 8080
+# Run as the image's ordinary "app" user, not root.
+USER app
+ENTRYPOINT ["dotnet", "TeamSite.Web.dll"]

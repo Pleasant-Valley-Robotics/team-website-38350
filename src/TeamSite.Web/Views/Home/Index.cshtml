@@ -1,0 +1,97 @@
+@model Team
+
+<section class="team-hero">
+    <div class="container hero-grid">
+        <div>
+            <span class="eyebrow">@Model.Program Team #@Model.Number@(Model.Founded is null ? "" : $" · Since {Model.Founded}")</span>
+            <h1>@Model.Name</h1>
+            <p class="tagline">@Model.Tagline</p>
+            @if (Model.Highlights.Count > 0)
+            {
+                <ul class="chips">
+                    @foreach (var highlight in Model.Highlights)
+                    {
+                        <li>@highlight</li>
+                    }
+                </ul>
+            }
+        </div>
+        <div class="hero-logo" style="background: @Model.LogoBackground">
+            <img src="@Model.Logo" alt="@Model.Name logo" />
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container story">
+        <div class="prose">
+            @foreach (var paragraph in Model.Story)
+            {
+                <p>@paragraph</p>
+            }
+        </div>
+        <aside class="card connect">
+            <h3>Connect with @Model.ShortName</h3>
+            @if (Model.Email is not null)
+            {
+                <p><a href="mailto:@Model.Email">@Model.Email</a></p>
+            }
+            @if (Model.Email is null && Model.Socials.Count == 0)
+            {
+                <p class="muted">Coming soon.</p>
+            }
+            <ul class="pills">
+                @foreach (var social in Model.Socials)
+                {
+                    <li><a href="@social.Url" rel="noopener" target="_blank">@social.Label</a></li>
+                }
+            </ul>
+        </aside>
+    </div>
+    @if (Model.Photo is not null)
+    {
+        <div class="container">
+            <figure class="photo">
+                <img src="@Model.Photo" alt="@Model.PhotoCaption" loading="lazy" />
+                @if (Model.PhotoCaption is not null)
+                {
+                    <figcaption class="muted">@Model.PhotoCaption</figcaption>
+                }
+            </figure>
+        </div>
+    }
+</section>
+
+@foreach (var group in Model.Sections)
+{
+    <section class="section section--alt">
+        <div class="container">
+            <div class="section-head"><span class="eyebrow">How we work</span><h2>@group.Title</h2></div>
+            <div class="grid grid--3">
+                @foreach (var card in group.Cards)
+                {
+                    <div class="card item"><h3>@card.Title</h3><p class="muted">@card.Body</p></div>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+@if (Model.Outreach.Count > 0)
+{
+    <section class="section section--alt">
+        <div class="container">
+            <div class="section-head">
+                <span class="eyebrow">Outreach</span>
+                <h2>In the community</h2>
+                <p class="lede">Some of the ways @Model.ShortName shares STEM beyond the competition field.</p>
+            </div>
+            <div class="grid grid--3">
+                @foreach (var card in Model.Outreach)
+                {
+                    <div class="card item"><h3>@card.Title</h3><p class="muted">@card.Body</p></div>
+                }
+            </div>
+        </div>
+    </section>
+}
