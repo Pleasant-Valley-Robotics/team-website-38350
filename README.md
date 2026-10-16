@@ -1,4 +1,4 @@
-# Team website
+# Prime Suspects (FTC 38350) website
 
 This is your team's own website. It is part of Pleasant Valley FIRST Robotics
 and is hosted on the program's robotics server.
