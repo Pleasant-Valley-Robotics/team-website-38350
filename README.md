@@ -8,6 +8,43 @@ of Pleasant Valley FIRST Robotics and runs on the program's robotics server.
 | **Preview** | `https://dev-38350.firstpvrobotics.com` | Mentors (password) |
 | **Live site** | `https://38350.firstpvrobotics.com` | Everyone |
 
+## Add a page the simple way
+
+A page can be **one file in `Pages/`** and **one line in the menu**. The file's name is
+its address: `Pages/Robot.cshtml` is `/robot` (capitals don't matter).
+
+1. Create `src/TeamSite.Web/Pages/Robot.cshtml` with this in it:
+
+   ```html
+   @page
+   @{
+       ViewData["Title"] = "Our Robot";
+   }
+   <section class="section">
+       <div class="container">
+           <h1>Our Robot</h1>
+           <p>This season's robot picks up game pieces with a two-wheel intake.</p>
+       </div>
+   </section>
+   ```
+
+   The first line, `@page`, tells the site this file is a page. The `Title` is the
+   words in the browser tab. Everything after that is your HTML, and the site puts it
+   inside the same frame (menu, footer) as every other page.
+
+2. In `src/TeamSite.Web/Data/TeamInfo.cs`, find `Nav` (the menu) and add one line
+   under the Home line:
+
+   ```csharp
+   ("Our Robot", "/robot"),
+   ```
+
+3. Run `dotnet test`. One test reads the menu and checks every link in it opens a
+   page, so a typo in the address shows up here before anyone sees it.
+
+The home page itself is in the older style, `Views/Home/Index.cshtml` with its words
+in `Data/TeamInfo.cs`; both kinds of page work side by side.
+
 ## Run it on your computer
 
 Install the [.NET 10 SDK](https://dotnet.microsoft.com/download) and
@@ -41,11 +78,12 @@ dotnet test                                  # runs the tests
 | `Controllers/HomeController.cs` | One method per page. `[Route("")]` above `Index()` makes it the home page |
 | `Views/Home/Index.cshtml` | The HTML for the home page (Razor: HTML plus `@` for C#) |
 | `Views/Shared/_Layout.cshtml` | The frame around every page: menu and footer |
+| `Pages/` | Pages written as one file each (see "Add a page the simple way") |
 | `wwwroot/` | Files sent as-is: `css/site.css`, `images/`, `fonts/` |
 | `Program.cs` | Where the site starts |
 | `tests/TeamSite.Web.Tests/` | Tests GitHub runs on every pull request |
 
-### Add a page (for example, "Our Robot")
+### Add a page the MVC way (for example, "Our Robot")
 
 1. In `HomeController.cs`, add:
    ```csharp
