@@ -1,7 +1,6 @@
-node_modules
-dist
-.astro
+**/bin
+**/obj
 .git
 .github
+tests
 *.md
-!src/**/*.md

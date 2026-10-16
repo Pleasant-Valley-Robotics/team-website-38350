@@ -1,6 +1,9 @@
-node_modules/
-dist/
-.astro/
+bin/
+obj/
+*.user
+.vs/
+.vscode/
+TestResults/
 .env
 .env*.local
 .DS_Store
