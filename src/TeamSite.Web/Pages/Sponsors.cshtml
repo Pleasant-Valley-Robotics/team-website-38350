@@ -1,0 +1,65 @@
+@page
+@{
+    ViewData["Title"] = "Sponsors";
+}
+@*
+    The sponsors page: /sponsors
+    When a sponsor signs on, replace a "Your logo here" card with theirs:
+        <a class="card sponsor" href="https://their-website.com" rel="noopener" target="_blank">
+            <img src="/images/sponsors/their-logo.png" alt="Their name" />
+        </a>
+    Put the logo file in wwwroot/images/sponsors/.
+*@
+
+<section class="page-hero">
+    <div class="container">
+        <span class="eyebrow">Sponsors</span>
+        <h1>Powered by our sponsors</h1>
+        <p class="lede">Robots, parts, competition fees and travel all cost money. Our sponsors make it possible for students to build, compete and learn.</p>
+        <div class="btn-row">
+            <a class="btn btn--primary" href="/contact">Become a sponsor</a>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <h2>Our sponsors</h2>
+        <div class="grid grid--3">
+            <div class="card sponsor sponsor--open">
+                <span>Your logo here</span>
+            </div>
+            <div class="card sponsor sponsor--open">
+                <span>Your logo here</span>
+            </div>
+            <div class="card sponsor sponsor--open">
+                <span>Your logo here</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section section--alt">
+    <div class="container grid grid--2">
+        <div>
+            <span class="eyebrow">Why sponsor</span>
+            <h2>What your support does</h2>
+        </div>
+        <ul class="checklist">
+            <li>Buys the parts, tools and electronics for this season's robot</li>
+            <li>Covers competition registration and travel</li>
+            <li>Gives students hands-on experience in engineering, programming and business</li>
+            <li>Puts your name in front of students, families and the community</li>
+        </ul>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container cta">
+        <div>
+            <h2>The whole program</h2>
+            <p class="muted">Pleasant Valley <em>FIRST</em> Robotics is supported by sponsors across all of its teams.</p>
+        </div>
+        <a class="btn btn--ghost" href="https://www.firstpvrobotics.com/sponsors/">Program sponsors ↗</a>
+    </div>
+</section>

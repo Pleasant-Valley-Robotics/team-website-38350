@@ -1,0 +1,30 @@
+@page
+@{
+    ViewData["Title"] = "News";
+}
+@*
+    The News page: /news
+    Each post is one <article>. To add a post, copy a whole <article> ... </article>
+    block, put it at the TOP of the list (newest first) and change the date, title and words.
+*@
+
+<section class="page-hero">
+    <div class="container">
+        <span class="eyebrow">News</span>
+        <h1>Latest from the team</h1>
+        <p class="lede">Build updates, competition results and everything in between.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container posts">
+
+        <!-- A post. The date in datetime="..." is year-month-day. -->
+        <article class="card post">
+            <span class="eyebrow"><time datetime="2026-10-31">October 31, 2026</time></span>
+            <h2>Welcome to our new website</h2>
+            <p class="muted">Prime Suspects has a new home on the web. Check back here for news from the build room and the competition field, and follow us on Instagram and TikTok for photos and videos along the way.</p>
+        </article>
+
+    </div>
+</section>

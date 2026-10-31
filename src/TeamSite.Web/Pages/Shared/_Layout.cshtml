@@ -2,6 +2,11 @@
     The frame around every page: the browser tab's title, the menu at the top and
     the footer at the bottom. Each page's own words appear where @RenderBody() is.
 *@
+@{
+    // Which page is open, so the menu can light up its link.
+    var here = (Context.Request.Path.Value ?? "/").TrimEnd('/').ToLowerInvariant();
+    string? Current(string href) => here == href.TrimEnd('/') ? "page" : null;
+}
 <!doctype html>
 <html lang="en">
 <head>
@@ -26,15 +31,21 @@
     <header class="header">
         <div class="container bar">
             <a class="brand" href="/">
-                <!-- Your team's logo (put the file in wwwroot/images/). The background suits most logos; use #000000 for logos drawn on black. -->
+                <!-- Your team's logo (put the file in wwwroot/images/). Use #000000 for logos drawn on black. -->
                 <img src="/images/prime-suspects-logo.jpg" alt="" width="40" height="40" style="background: #000000" />
-                <span>Prime Suspects</span>
+                <span>Prime Suspects <small>#38350</small></span>
             </a>
-            <!-- The menu. To add a page to it, copy one <li> line and change the address and the words. -->
+            <!-- The menu. To add a page to it, copy one <li> line and change the address (twice) and the words. -->
             <nav aria-label="Main">
                 <ul>
-                    <li><a href="/">Home</a></li>
-                    <li><a href="https://www.firstpvrobotics.com">PV Robotics ↗</a></li>
+                    <li><a href="/" aria-current="@Current("/")">Home</a></li>
+                    <li><a href="/news" aria-current="@Current("/news")">News</a></li>
+                    <li><a href="/season" aria-current="@Current("/season")">2026–27 Season</a></li>
+                    <li><a href="/team" aria-current="@Current("/team")">Meet the Team</a></li>
+                    <li><a href="/calendar" aria-current="@Current("/calendar")">Calendar</a></li>
+                    <li><a href="/sponsors" aria-current="@Current("/sponsors")">Sponsors</a></li>
+                    <li><a href="/thank-you" aria-current="@Current("/thank-you")">Thank You</a></li>
+                    <li><a href="/contact" aria-current="@Current("/contact")" class="nav-cta">Contact</a></li>
                 </ul>
             </nav>
         </div>
@@ -45,12 +56,38 @@
     </main>
 
     <footer class="footer">
-        <div class="container footer-inner">
-            <a class="pv" href="https://www.firstpvrobotics.com">
-                <img src="/images/pv-logo.png" alt="" width="44" height="44" />
-                <span>Part of Pleasant Valley FIRST Robotics</span>
-            </a>
-            <img class="footer-first" src="/images/first-logo.png" alt="FIRST" width="111" height="70" />
+        <div class="container footer-grid">
+            <div>
+                <a class="brand" href="/">
+                    <img src="/images/prime-suspects-logo.jpg" alt="" width="40" height="40" style="background: #000000" />
+                    <span>Prime Suspects</span>
+                </a>
+                <p class="muted footer-blurb"><em>FIRST</em> Tech Challenge Team #38350 at Pleasant Valley High School.</p>
+            </div>
+            <div>
+                <h3 class="footer-head">Follow us</h3>
+                <!-- The team's accounts. The same links are on the home page and the Contact page. -->
+                <ul class="footer-links">
+                    <li><a href="https://www.instagram.com/prime_suspects_38350/" rel="noopener" target="_blank">Instagram</a></li>
+                    <li><a href="https://www.tiktok.com/@@prime.suspects5" rel="noopener" target="_blank">TikTok</a></li>
+                    <li><a href="mailto:FTC38350@gmail.com">FTC38350@gmail.com</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="footer-head">Get involved</h3>
+                <ul class="footer-links">
+                    <li><a href="/sponsors">Sponsor the team</a></li>
+                    <li><a href="/contact">Contact us</a></li>
+                    <li><a href="/thank-you">Thank you</a></li>
+                </ul>
+            </div>
+            <div class="footer-logos">
+                <a class="pv" href="https://www.firstpvrobotics.com">
+                    <img src="/images/pv-logo.png" alt="" width="44" height="44" />
+                    <span>Part of Pleasant Valley <em>FIRST</em> Robotics</span>
+                </a>
+                <img class="footer-first" src="/images/first-logo.png" alt="FIRST" width="111" height="70" />
+            </div>
         </div>
         <!-- The year fills itself in. -->
         <div class="container legal muted">© @DateTime.Now.Year Prime Suspects · FTC Team #38350</div>
