@@ -1,6 +1,8 @@
 using System.Net;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace TeamSite.Web.Tests;
 
@@ -27,7 +29,7 @@ public class PageTests(WebApplicationFactory<Program> factory) : IClassFixture<W
     {
         var html = await HomePage();
 
-        Assert.Contains("<h1>", html);
+        Assert.Contains("<h1", html);
         Assert.Contains("<nav", html);
     }
 
@@ -66,6 +68,37 @@ public class PageTests(WebApplicationFactory<Program> factory) : IClassFixture<W
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         Assert.Contains("drove off the field", await response.Content.ReadAsStringAsync());
+    }
+
+    [Fact]
+    public async Task Ets_board_asks_for_the_password_first()
+    {
+        // Without signing in, the board sends visitors to the password page.
+        var client = factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+        var response = await client.GetAsync("/ets");
+
+        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+        Assert.StartsWith("/ets/login", response.Headers.Location?.PathAndQuery);
+    }
+
+    [Fact]
+    public void Ets_buttons_use_lowercase_addresses()
+    {
+        // The ETS sign-in cookie only goes to /ets. Browsers treat /Ets as a different
+        // address, so a button posting to /Ets would act as if nobody were signed in.
+        var links = factory.Services.GetRequiredService<LinkGenerator>();
+        var signOut = links.GetPathByPage("/Ets/Index", "SignOut");
+
+        Assert.StartsWith("/ets?", signOut);
+    }
+
+    [Fact]
+    public async Task Ets_pages_stay_out_of_search_engines()
+    {
+        var html = await _client.GetStringAsync("/ets/login");
+
+        Assert.Contains("noindex", html);
+        Assert.DoesNotContain("noindex", await HomePage());
     }
 
     [Fact]

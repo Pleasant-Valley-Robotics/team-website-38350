@@ -12,6 +12,11 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    @if (ViewData["NoIndex"] is true)
+    {
+        <!-- Private pages (ETS) stay out of search engines. -->
+        <meta name="robots" content="noindex, nofollow" />
+    }
     <!-- The words in the browser tab: the page's own title, then your team's name. -->
     <title>@ViewData["Title"] | Prime Suspects</title>
     <!-- What search engines and link previews say about your site. -->
@@ -46,6 +51,8 @@
                     <li><a href="/sponsors" aria-current="@Current("/sponsors")">Sponsors</a></li>
                     <li><a href="/thank-you" aria-current="@Current("/thank-you")">Thank You</a></li>
                     <li><a href="/contact" aria-current="@Current("/contact")" class="nav-cta">Contact</a></li>
+                    <!-- ETS, the team's private scrum board. It asks for the team password. -->
+                    <li><a href="/ets" aria-current="@(here.StartsWith("/ets") ? "page" : null)" class="nav-private">🔒 ETS</a></li>
                 </ul>
             </nav>
         </div>

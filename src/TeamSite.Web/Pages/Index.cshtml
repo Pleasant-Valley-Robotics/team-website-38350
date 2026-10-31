@@ -13,8 +13,25 @@
         <div>
             <!-- FTC or FRC and your team number. -->
             <span class="eyebrow">FTC Team #38350 · Pleasant Valley High School</span>
-            <!-- Your team's name. -->
-            <h1>Prime <span class="gradient-text">Suspects</span></h1>
+            <!-- Your team's name. It fades in letter by letter, shimmers and sparkles (site.css, "Sparkly title").
+                 To change the words, change the two names below: the first is white, the second is the gradient. -->
+            @{
+                var words = new[] { (Text: "Prime", Gradient: false), (Text: "Suspects", Gradient: true) };
+                var n = 0;
+            }
+            <h1 class="sparkle-title" aria-label="@string.Join(" ", words.Select(w => w.Text))">
+                @foreach (var word in words)
+                {
+                    <span class="sparkle-word@(word.Gradient ? " sparkle-word--gradient" : "")" aria-hidden="true">@for (var k = 0; k < word.Text.Length; k++)
+                    {<span class="sparkle-letter" style="--i: @n; --p: @(k * 100 / Math.Max(1, word.Text.Length - 1))%">@word.Text[k]</span>n++;}</span>
+                }
+                <span class="sparkle" style="--x: -2%; --y: 8%; --d: 0s; --s: 1.1" aria-hidden="true">✦</span>
+                <span class="sparkle sparkle--pink" style="--x: 30%; --y: -18%; --d: 0.7s; --s: 0.8" aria-hidden="true">✦</span>
+                <span class="sparkle sparkle--cyan" style="--x: 58%; --y: 92%; --d: 1.4s; --s: 0.9" aria-hidden="true">✦</span>
+                <span class="sparkle sparkle--pink" style="--x: 82%; --y: -10%; --d: 2.1s; --s: 1.2" aria-hidden="true">✦</span>
+                <span class="sparkle" style="--x: 99%; --y: 70%; --d: 0.35s; --s: 0.7" aria-hidden="true">✦</span>
+                <span class="sparkle sparkle--cyan" style="--x: 14%; --y: 96%; --d: 1.8s; --s: 0.6" aria-hidden="true">✦</span>
+            </h1>
             <!-- One or two sentences about the team. -->
             <p class="tagline">Pleasant Valley's newest <em>FIRST</em> Tech Challenge team, on the case.</p>
             <div class="btn-row">

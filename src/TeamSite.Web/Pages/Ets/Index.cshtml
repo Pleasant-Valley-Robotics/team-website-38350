@@ -1,0 +1,156 @@
+@page
+@model TeamSite.Web.Pages.Ets.IndexModel
+@using TeamSite.Web.Ets
+@using TeamSite.Web.Pages.Ets
+@{
+    ViewData["Title"] = "ETS";
+    ViewData["NoIndex"] = true;
+}
+@*
+    The ETS board: /ets. Cards are saved in the team's database, not in this file,
+    so you change them on the board itself.
+*@
+
+<section class="ets-head">
+    <div class="container ets-bar">
+        <div>
+            <span class="eyebrow">Team only</span>
+            <h1>ETS</h1>
+        </div>
+        <form method="post" asp-page-handler="SignOut">
+            <button class="btn btn--ghost" type="submit">Sign out</button>
+        </form>
+    </div>
+</section>
+
+<section class="ets-section">
+    <div class="container">
+        <details class="card ets-add" open="@(Model.Error is not null)">
+            <summary><strong>+ Add a card</strong></summary>
+            <form method="post" asp-page-handler="Add" class="ets-form">
+                @if (Model.Error is not null)
+                {
+                    <p class="form-error" role="alert">@Model.Error</p>
+                }
+                <label>Title <input name="title" maxlength="@IndexModel.TitleMax" required /></label>
+                <label>Description <textarea name="notes" rows="3" maxlength="@IndexModel.NotesMax" placeholder="What the task involves"></textarea></label>
+                <div class="ets-row">
+                    <label>Subteam
+                        <select name="subteam">
+                            <option value="">None</option>
+                            @foreach (var s in EtsStore.Subteams)
+                            {
+                                <option>@s</option>
+                            }
+                        </select>
+                    </label>
+                    <label>Who's on it <input name="owner" maxlength="@IndexModel.OwnerMax" placeholder="First name" /></label>
+                    <label>Due date <span class="muted optional">(optional)</span> <input name="due" type="date" /></label>
+                </div>
+                <button class="btn btn--primary" type="submit">Add to To do</button>
+            </form>
+        </details>
+
+        <div class="ets-board">
+            @for (var c = 0; c < IndexModel.Columns.Length; c++)
+            {
+                var column = IndexModel.Columns[c];
+                var cards = Model.Cards.Where(x => x.Status == column.Status).ToList();
+                <section class="ets-column" aria-label="@column.Name">
+                    <h2 class="ets-column-head">@column.Name <span class="ets-count">@cards.Count</span></h2>
+                    @if (cards.Count == 0)
+                    {
+                        <p class="muted ets-empty">No cards</p>
+                    }
+                    @foreach (var card in cards)
+                    {
+                        <article class="ets-card">
+                            @if (card.Subteam.Length > 0)
+                            {
+                                <span class="ets-tag ets-tag--@card.Subteam.ToLowerInvariant()">@card.Subteam</span>
+                            }
+                            <h3>@card.Title</h3>
+                            @if (card.Notes.Length > 0)
+                            {
+                                <p class="ets-notes">@card.Notes</p>
+                            }
+                            @if (card.Owner.Length > 0)
+                            {
+                                <p class="ets-owner">👤 @card.Owner</p>
+                            }
+                            @if (card.Due is { } due && card.Status != CardStatus.Done)
+                            {
+                                var late = due < EtsStore.Today;
+                                <p class="ets-due @(late ? "ets-due--late" : due == EtsStore.Today ? "ets-due--today" : "")">
+                                    📅 Due <time datetime="@due.ToString("yyyy-MM-dd")">@IndexModel.ShortDate(due)</time>@(late ? " · overdue" : due == EtsStore.Today ? " · today" : "")
+                                </p>
+                            }
+                            <div class="ets-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="@card.Progress" aria-label="Progress">
+                                <span style="width: @(card.Progress)%"></span>
+                            </div>
+                            <p class="ets-percent">
+                                <strong>@(card.Progress)%</strong>
+                                @if (card.Status == CardStatus.Done && card.DoneOn is { } doneOn)
+                                {
+                                    <span class="muted">· Done <time datetime="@doneOn.ToString("yyyy-MM-dd")">@IndexModel.ShortDate(doneOn)</time></span>
+                                }
+                            </p>
+                            @if (card.Status == CardStatus.Doing)
+                            {
+                                <form method="post" asp-page-handler="Progress" class="ets-steps" aria-label="Set progress">
+                                    <input type="hidden" name="id" value="@card.Id" />
+                                    @foreach (var step in EtsStore.ProgressSteps)
+                                    {
+                                        <button type="submit" name="progress" value="@step" aria-pressed="@(step == card.Progress ? "true" : "false")">@(step)%</button>
+                                    }
+                                </form>
+                            }
+                            <div class="ets-actions">
+                                @if (c > 0)
+                                {
+                                    <form method="post" asp-page-handler="Move">
+                                        <input type="hidden" name="id" value="@card.Id" />
+                                        <input type="hidden" name="to" value="@IndexModel.Columns[c - 1].Status" />
+                                        <button type="submit" title="Move to @IndexModel.Columns[c - 1].Name">← @IndexModel.Columns[c - 1].Name</button>
+                                    </form>
+                                }
+                                @if (c < IndexModel.Columns.Length - 1)
+                                {
+                                    <form method="post" asp-page-handler="Move">
+                                        <input type="hidden" name="id" value="@card.Id" />
+                                        <input type="hidden" name="to" value="@IndexModel.Columns[c + 1].Status" />
+                                        <button type="submit" title="Move to @IndexModel.Columns[c + 1].Name">@IndexModel.Columns[c + 1].Name →</button>
+                                    </form>
+                                }
+                            </div>
+                            <details class="ets-more">
+                                <summary>Edit</summary>
+                                <form method="post" asp-page-handler="Edit" class="ets-form">
+                                    <input type="hidden" name="id" value="@card.Id" />
+                                    <label>Title <input name="title" value="@card.Title" maxlength="@IndexModel.TitleMax" required /></label>
+                                    <label>Description <textarea name="notes" rows="3" maxlength="@IndexModel.NotesMax">@card.Notes</textarea></label>
+                                    <label>Subteam
+                                        <select name="subteam">
+                                            <option value="">None</option>
+                                            @foreach (var s in EtsStore.Subteams)
+                                            {
+                                                <option selected="@(s == card.Subteam)">@s</option>
+                                            }
+                                        </select>
+                                    </label>
+                                    <label>Who's on it <input name="owner" value="@card.Owner" maxlength="@IndexModel.OwnerMax" /></label>
+                                    <label>Due date <span class="muted optional">(optional)</span> <input name="due" type="date" value="@card.Due?.ToString("yyyy-MM-dd")" /></label>
+                                    <button class="btn btn--primary" type="submit">Save</button>
+                                </form>
+                                <form method="post" asp-page-handler="Delete" class="ets-delete">
+                                    <input type="hidden" name="id" value="@card.Id" />
+                                    <button type="submit">Delete this card</button>
+                                </form>
+                            </details>
+                        </article>
+                    }
+                </section>
+            }
+        </div>
+    </div>
+</section>

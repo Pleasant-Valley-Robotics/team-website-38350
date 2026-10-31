@@ -12,6 +12,8 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0
 WORKDIR /app
 COPY --from=build /app .
 ENV ASPNETCORE_HTTP_PORTS=8080
+# A folder the "app" user can write, for the ETS sign-in keys (a volume in compose.yaml).
+RUN mkdir /keys && chown app /keys
 EXPOSE 8080
 # Run as the image's ordinary "app" user, not root.
 USER app

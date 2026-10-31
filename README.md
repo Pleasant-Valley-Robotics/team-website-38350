@@ -112,6 +112,29 @@ Press `Ctrl+C` in the terminal to stop the site.
 the previous version running. To see what happened, open
 `https://dev-38350.firstpvrobotics.com/_platform/` (mentor password).
 
+## ETS, the private scrum board
+
+**ETS** (`/ets`, the 🔒 ETS tab) is the team's scrum board: cards in **To do**,
+**In progress** and **Done**, each with a subteam and who's on it. It asks for one team
+password. The cards and the password are kept in the team's database on the robotics
+server, never in this repository, and the password only as a scrambled hash. The preview
+and the live site each have **their own** board and **their own** password.
+
+**Set or reset the password** (a mentor, from a computer with server access; it asks for
+the new password twice without showing it, and signs everyone out):
+
+```bash
+tools/robotics-shell 'sudo robotics-team docker 38350 exec -it live-web-1 dotnet TeamSite.Web.dll ets-password'
+```
+
+Use `dev-web-1` instead of `live-web-1` for the preview. Until a password is set, ETS says
+it hasn't been set up yet. There is no "forgot password" email: ask a mentor to reset it.
+
+**Try it on your computer:** ETS needs a PostgreSQL database. Start one, then run the site
+with `PGHOST`, `PGPORT`, `PGUSER` and `PGDATABASE` set to it, and set a password with
+`dotnet run --project src/TeamSite.Web -- ets-password`. Without a database, the rest of
+the site works and ETS says it isn't available.
+
 ## What's in the folder
 
 | File or folder | What it does |
@@ -123,11 +146,12 @@ the previous version running. To see what happened, open
 | `Pages/_ViewStart.cshtml`, `Pages/_ViewImports.cshtml` | Settings for every page. Leave them alone |
 | `wwwroot/` | Files sent as they are: `css/site.css`, `images/`, `fonts/` |
 | `Program.cs` | Where the site starts. You don't need to change it |
+| `Pages/Ets/`, `Ets/` | ETS, the private scrum board: its pages, and where its cards and password are kept |
 | `tests/TeamSite.Web.Tests/` | The tests GitHub runs on every pull request |
 
 ## Files the server needs (leave these alone unless you know why)
 
 - `Dockerfile`: compiles the site and runs it.
-- `compose.yaml`: how the server runs the container.
+- `compose.yaml`: how the server runs the container, and the database settings ETS uses.
 - `robotics.yml`: which address goes to the container. `public: true` opens the live site to everyone.
 - `.github/workflows/check.yml`: the checks on every pull request.
