@@ -1,0 +1,52 @@
+@page
+@model TeamSite.Web.Pages.Ets.LoginModel
+@{
+    ViewData["Title"] = "ETS";
+    ViewData["NoIndex"] = true;
+}
+@*
+    The ETS password page: /ets/login. The password is set by a mentor on the
+    robotics server (README.md, "ETS, the private scrum board"), never in this file.
+*@
+
+<section class="page-hero">
+    <div class="container">
+        <span class="eyebrow">Team only</span>
+        <h1>ETS</h1>
+        <p class="lede">Our private scrum board. Enter the team password to open it.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="card ets-login">
+            @if (!Model.HasDatabase || Model.DatabaseDown)
+            {
+                <h2 class="h3">ETS isn't available right now</h2>
+                <p class="muted">The board's database can't be reached. Please try again later, or let a mentor know.</p>
+            }
+            else if (!Model.HasPassword)
+            {
+                <h2 class="h3">ETS hasn't been set up yet</h2>
+                <p class="muted">A mentor needs to set the team password before anyone can sign in.</p>
+            }
+            else
+            {
+                <form method="post">
+                    <label for="password">Team password</label>
+                    <input id="password" name="Password" type="password" autocomplete="current-password" required autofocus />
+                    @if (Model.Error is not null)
+                    {
+                        <p class="form-error" role="alert">@Model.Error</p>
+                    }
+                    @if (Model.Wait)
+                    {
+                        <p class="form-error" role="alert">Too many tries. Please wait a minute, then try again.</p>
+                    }
+                    <button class="btn btn--primary" type="submit">Open ETS</button>
+                </form>
+                <p class="muted small">Forgot the password? Ask a mentor to reset it.</p>
+            }
+        </div>
+    </div>
+</section>

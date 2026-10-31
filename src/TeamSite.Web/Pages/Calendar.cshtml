@@ -1,0 +1,57 @@
+@page
+@{
+    ViewData["Title"] = "Calendar";
+
+    // The team calendar. Each event is one line: its date (year, month, day), what it is, and where.
+    // To add an event, copy the example line, take the two slashes off the front, and change it.
+    // No place yet? Write null instead of the place, without quotes.
+    // Events that have passed leave the page by themselves; the rest show soonest first.
+    var events = new (DateOnly Date, string Title, string? Place)[]
+    {
+        // (new DateOnly(2026, 12, 5), "Event name", "Where it is"),
+    };
+    var upcoming = events.Where(e => e.Date >= DateOnly.FromDateTime(DateTime.Now)).OrderBy(e => e.Date).ToList();
+    var en = System.Globalization.CultureInfo.InvariantCulture;
+}
+@*
+    The calendar page: /calendar
+    You only need to change the list of events at the top of this file.
+*@
+
+<section class="page-hero">
+    <div class="container">
+        <span class="eyebrow">Calendar</span>
+        <h1>What's coming up</h1>
+        <p class="lede">Competitions, outreach events and team milestones.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        @if (upcoming.Count == 0)
+        {
+            <div class="card empty">
+                <h2 class="h3">No events scheduled yet</h2>
+                <p class="muted">Check back soon, or follow us on Instagram and TikTok for updates.</p>
+            </div>
+        }
+        else
+        {
+            <ol class="events">
+                @foreach (var e in upcoming)
+                {
+                    <li class="card event">
+                        <time class="event-date" datetime="@e.Date.ToString("yyyy-MM-dd")">
+                            <span>@e.Date.ToString("MMM", en)</span>
+                            <strong>@e.Date.Day</strong>
+                        </time>
+                        <div>
+                            <h2 class="h3">@e.Title</h2>
+                            <p class="muted">@e.Date.ToString("dddd, MMMM d, yyyy", en)@(e.Place is null ? "" : " · " + e.Place)</p>
+                        </div>
+                    </li>
+                }
+            </ol>
+        }
+    </div>
+</section>

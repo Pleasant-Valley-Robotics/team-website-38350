@@ -7,4 +7,18 @@ services:
       - "127.0.0.1:${PORT_1}:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: Production
+      # ETS, the private scrum board, keeps its cards and password in this team's
+      # database (schema "ets"). The robotics server fills these in at each release.
+      PGHOST: ${PGHOST}
+      PGPORT: ${PGPORT}
+      PGUSER: ${PGUSER}
+      PGPASSWORD: ${PGPASSWORD}
+      PGDATABASE: ${PGDATABASE}
+      # Where the keys for ETS sign-in cookies are kept, so a release doesn't sign everyone out.
+      KEYS_DIR: /keys
+    volumes:
+      - ets-keys:/keys
     restart: unless-stopped
+
+volumes:
+  ets-keys:

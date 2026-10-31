@@ -12,9 +12,32 @@
     <div class="container hero-grid">
         <div>
             <!-- FTC or FRC and your team number. -->
-            <span class="eyebrow">FTC Team #38350</span>
-            <!-- Your team's name. -->
-            <h1>Prime Suspects</h1>
+            <span class="eyebrow">FTC Team #38350 · Pleasant Valley High School</span>
+            <!-- Your team's name. It fades in letter by letter, shimmers and sparkles (site.css, "Sparkly title").
+                 To change the words, change the two names below: the first is white, the second is the gradient. -->
+            @{
+                var words = new[] { (Text: "Prime", Gradient: false), (Text: "Suspects", Gradient: true) };
+                var n = 0;
+            }
+            <h1 class="sparkle-title" aria-label="@string.Join(" ", words.Select(w => w.Text))">
+                @foreach (var word in words)
+                {
+                    <span class="sparkle-word@(word.Gradient ? " sparkle-word--gradient" : "")" aria-hidden="true">@for (var k = 0; k < word.Text.Length; k++)
+                    {<span class="sparkle-letter" style="--i: @n; --p: @(k * 100 / Math.Max(1, word.Text.Length - 1))%">@word.Text[k]</span>n++;}</span>
+                }
+                <span class="sparkle" style="--x: -2%; --y: 8%; --d: 0s; --s: 1.1" aria-hidden="true">✦</span>
+                <span class="sparkle sparkle--pink" style="--x: 30%; --y: -18%; --d: 0.7s; --s: 0.8" aria-hidden="true">✦</span>
+                <span class="sparkle sparkle--cyan" style="--x: 58%; --y: 92%; --d: 1.4s; --s: 0.9" aria-hidden="true">✦</span>
+                <span class="sparkle sparkle--pink" style="--x: 82%; --y: -10%; --d: 2.1s; --s: 1.2" aria-hidden="true">✦</span>
+                <span class="sparkle" style="--x: 99%; --y: 70%; --d: 0.35s; --s: 0.7" aria-hidden="true">✦</span>
+                <span class="sparkle sparkle--cyan" style="--x: 14%; --y: 96%; --d: 1.8s; --s: 0.6" aria-hidden="true">✦</span>
+            </h1>
+            <!-- One or two sentences about the team. -->
+            <p class="tagline">Pleasant Valley's newest <em>FIRST</em> Tech Challenge team, on the case.</p>
+            <div class="btn-row">
+                <a class="btn btn--primary" href="/team">Meet the team</a>
+                <a class="btn btn--ghost" href="/season">Our 2026–27 season</a>
+            </div>
         </div>
         <!-- Your logo, in wwwroot/images/. Use background: #000000 for logos drawn on black. -->
         <div class="hero-logo" style="background: #000000">
@@ -24,22 +47,78 @@
 </section>
 
 <section class="section">
-    <div class="container">
-        <h2>About the team</h2>
-        <!-- A short summary of your team. One <p> per paragraph. -->
-        <div class="prose">
-            <p>Prime Suspects is <em>FIRST</em> Tech Challenge Team #38350 at Pleasant Valley High School. It is the school's newest <em>FIRST</em> Tech Challenge team. It is part of Pleasant Valley <em>FIRST</em> Robotics.</p>
+    <div class="container story">
+        <div>
+            <span class="eyebrow">About the team</span>
+            <h2>The case file</h2>
+            <!-- A short summary of your team. One <p> per paragraph. -->
+            <div class="prose">
+                <p>Prime Suspects is <em>FIRST</em> Tech Challenge Team #38350 at Pleasant Valley High School. It is the school's newest <em>FIRST</em> Tech Challenge team. It is part of Pleasant Valley <em>FIRST</em> Robotics.</p>
+            </div>
         </div>
+        <!-- Quick facts about the team. Copy one <li> line to add another. -->
+        <aside class="card facts">
+            <h3>Quick facts</h3>
+            <ul>
+                <li><span class="muted">Program</span><strong><em>FIRST</em> Tech Challenge</strong></li>
+                <li><span class="muted">Team number</span><strong>#38350</strong></li>
+                <li><span class="muted">School</span><strong>Pleasant Valley High School</strong></li>
+                <li><span class="muted">Season</span><strong>2026–2027</strong></li>
+            </ul>
+        </aside>
     </div>
 </section>
 
 <section class="section section--alt">
     <div class="container">
+        <div class="section-head">
+            <span class="eyebrow">Explore</span>
+            <h2>Follow the evidence</h2>
+        </div>
+        <!-- One card per page. Copy one <a class="card card-link"> block to add another. -->
+        <div class="grid grid--3">
+            <a class="card card-link" href="/news">
+                <h3>News</h3>
+                <p class="muted">The latest from the build room and the competition field.</p>
+                <span class="arrow">Read the news →</span>
+            </a>
+            <a class="card card-link" href="/season">
+                <h3>2026–27 Season</h3>
+                <p class="muted">This year's game, our robot and what we're aiming for.</p>
+                <span class="arrow">See the season →</span>
+            </a>
+            <a class="card card-link" href="/team">
+                <h3>Meet the Team</h3>
+                <p class="muted">The students and mentors behind the robot.</p>
+                <span class="arrow">Meet us →</span>
+            </a>
+            <a class="card card-link" href="/calendar">
+                <h3>Calendar</h3>
+                <p class="muted">Competitions, outreach events and meetings coming up.</p>
+                <span class="arrow">See what's next →</span>
+            </a>
+            <a class="card card-link" href="/sponsors">
+                <h3>Sponsors</h3>
+                <p class="muted">The businesses and people who make the season possible.</p>
+                <span class="arrow">Support the team →</span>
+            </a>
+            <a class="card card-link" href="/contact">
+                <h3>Contact</h3>
+                <p class="muted">Questions, sponsorships or want to join? Reach out.</p>
+                <span class="arrow">Contact us →</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
         <h2>Follow us</h2>
-        <!-- Your team has no accounts of its own yet, so this links to the program's.
-             When it has some, replace these lines with a list like the other team sites'. -->
-        <p class="muted">Follow the program:</p>
+        <!-- Links to your team's accounts. Copy one <li> line to add another. -->
         <ul class="pills">
+            <li><a href="https://www.instagram.com/prime_suspects_38350/" rel="noopener" target="_blank">Instagram</a></li>
+            <li><a href="https://www.tiktok.com/@@prime.suspects5" rel="noopener" target="_blank">TikTok</a></li>
+            <li><a href="mailto:FTC38350@gmail.com">Email</a></li>
             <li><a href="https://www.firstpvrobotics.com">Pleasant Valley <em>FIRST</em> Robotics</a></li>
         </ul>
     </div>

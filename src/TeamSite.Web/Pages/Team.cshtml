@@ -1,0 +1,62 @@
+@page
+@{
+    ViewData["Title"] = "Meet the Team";
+}
+@*
+    The team page: /team
+    Please use FIRST NAMES ONLY, and only for students who are OK being on the site.
+    Each person is one <div class="card person">. Copy one to add a person.
+    The two letters in the circle are the person's initials, or put a photo there instead:
+        <img class="avatar" src="/images/team/name.jpg" alt="" />
+*@
+
+<section class="page-hero">
+    <div class="container">
+        <span class="eyebrow">Meet the Team</span>
+        <h1>The suspects</h1>
+        <p class="lede">The students and mentors who design, build, program and drive the robot.</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <h2>Subteams</h2>
+        <p class="muted">Click a subteam to see what it does.</p>
+        <!-- Each subteam is one <details> block: its name, then what shows when it's opened.
+             To add a subteam, copy a whole <details> ... </details> block.
+             To have a subteam open when the page loads, write <details class="subteam" open>. -->
+        <div class="subteams">
+        <details class="subteam">
+            <summary><strong>Programming</strong></summary>
+            <div class="subteam-body">
+                <p class="muted">The Programming subteam writes the robot's software in Java, using Android Studio and GitHub to develop, test and share code. They program both the autonomous period, when the robot runs on its own, and the driver-controlled TeleOp period, turning the robot's hardware into precise, reliable movement on the field.</p>
+            </div>
+        </details>
+        <details class="subteam">
+            <summary><strong>Technical</strong></summary>
+            <div class="subteam-body">
+                <p class="muted">The Technical subteam designs the robot in CAD, then builds and assembles it from the ground up. From early sketches and prototypes to the finished competition robot, they turn ideas into mechanisms that can take on each season's challenge.</p>
+            </div>
+        </details>
+        <details class="subteam">
+            <summary><strong>Business</strong></summary>
+            <div class="subteam-body">
+                <p class="muted">The Business subteam leads community outreach and keeps the team running behind the scenes. They share the team's story, connect with sponsors and supporters, and take on the planning and organization that keep Prime Suspects moving forward.</p>
+            </div>
+        </details>
+        </div>
+    </div>
+</section>
+
+<section class="section section--alt">
+    <div class="container">
+        <h2>Coaches and mentors</h2>
+        <div class="grid grid--4">
+            <div class="card person">
+                <span class="avatar">?</span>
+                <h3>Name</h3>
+                <p class="muted">Coach</p>
+            </div>
+        </div>
+    </div>
+</section>
