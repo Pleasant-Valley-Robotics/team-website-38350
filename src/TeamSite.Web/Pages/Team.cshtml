@@ -6,7 +6,8 @@
     The team page: /team
     Please use FIRST NAMES ONLY, and only for students who are OK being on the site.
     Each person is one <div class="card person">. Copy one to add a person.
-    The two letters in the circle are the person's initials, or put a photo there instead:
+    The circle shows a blank profile picture (a head and shoulders). To use a photo instead,
+    replace the whole <span class="avatar avatar--blank"> ... </span> with:
         <img class="avatar" src="/images/team/name.jpg" alt="" />
 *@
 
@@ -24,24 +25,40 @@
         <p class="muted">Click a subteam to see what it does.</p>
         <!-- Each subteam is one <details> block: its name, then what shows when it's opened.
              To add a subteam, copy a whole <details> ... </details> block.
-             To have a subteam open when the page loads, write <details class="subteam" open>. -->
+             To have a subteam open when the page loads, write <details class="subteam" open>.
+             Students' FIRST NAMES ONLY. One <li> per member. -->
         <div class="subteams">
         <details class="subteam">
             <summary><strong>Programming</strong></summary>
             <div class="subteam-body">
-                <p class="muted">The Programming subteam writes the robot's software in Java, using Android Studio and GitHub to develop, test and share code. They program both the autonomous period, when the robot runs on its own, and the driver-controlled TeleOp period, turning the robot's hardware into precise, reliable movement on the field.</p>
+                <p class="muted">The Programming subteam writes the robot's software in Java, using Android Studio and GitHub to develop, test and share code. They program both the autonomous period, when the robot runs on its own, and the driver-controlled TeleOp period, turning the robot's hardware into precise, reliable movement on the field. They also code the robot's special features, the custom tools and smart behaviors that give Prime Suspects an edge in each season's game.</p>
+                <div class="subteam-people">
+                    <p><span class="subteam-label">Lead</span> <span class="subteam-lead">Thanuja</span></p>
+                    <p class="subteam-label">Members</p>
+                    <ul class="subteam-members"><li>Sadhana</li><li>Joshika</li><li>Lakshmi</li><li>Prakruthi</li></ul>
+                </div>
             </div>
         </details>
         <details class="subteam">
             <summary><strong>Technical</strong></summary>
             <div class="subteam-body">
                 <p class="muted">The Technical subteam designs the robot in CAD, then builds and assembles it from the ground up. From early sketches and prototypes to the finished competition robot, they turn ideas into mechanisms that can take on each season's challenge.</p>
+                <div class="subteam-people">
+                    <p><span class="subteam-label">Co-leads</span> <span class="subteam-lead">Weston and Anant</span></p>
+                    <p class="subteam-label">Members</p>
+                    <ul class="subteam-members"><li>Chatur</li><li>Saiesha</li><li>Sudeeksha</li><li>Suhaas</li><li>Ashrit</li></ul>
+                </div>
             </div>
         </details>
         <details class="subteam">
             <summary><strong>Business</strong></summary>
             <div class="subteam-body">
                 <p class="muted">The Business subteam leads community outreach and keeps the team running behind the scenes. They share the team's story, connect with sponsors and supporters, and take on the planning and organization that keep Prime Suspects moving forward.</p>
+                <div class="subteam-people">
+                    <p><span class="subteam-label">Lead</span> <span class="subteam-lead">Daegus</span></p>
+                    <p class="subteam-label">Members</p>
+                    <ul class="subteam-members"><li>Sushritha</li><li>Sahana</li><li>Nishanth</li></ul>
+                </div>
             </div>
         </details>
         </div>
@@ -53,9 +70,34 @@
         <h2>Coaches and mentors</h2>
         <div class="grid grid--4">
             <div class="card person">
-                <span class="avatar">?</span>
-                <h3>Name</h3>
+                <span class="avatar avatar--blank" aria-hidden="true"><svg viewBox="0 0 96 96"><circle cx="48" cy="36" r="17" fill="currentColor" /><circle cx="48" cy="98" r="36" fill="currentColor" /><!-- hard hat: gray dome, black band, brim and button --><path d="M30 35 A18 18 0 0 1 66 35 Z" fill="#6b6f7a" stroke="#111" stroke-width="1" /><rect x="30" y="32" width="36" height="3.5" fill="#111" /><path d="M26 36 Q48 30 70 36 Q48 42 26 36 Z" fill="#111" /><circle cx="48" cy="17.5" r="2" fill="#111" /></svg></span>
+                <h3>Jason Franzenburg</h3>
                 <p class="muted">Coach</p>
+            </div>
+            <div class="card person">
+                <img class="avatar" src="/images/team/mason-hancock.jpg" alt="Mason Hancock" />
+                <h3>Mason Hancock</h3>
+                <p class="muted">Technical Mentor</p>
+            </div>
+            <div class="card person">
+                <img class="avatar" src="/images/team/brandon-seamer.jpg" alt="Brandon Seamer" />
+                <h3>Brandon Seamer</h3>
+                <p class="muted">Software Mentor</p>
+            </div>
+            <div class="card person">
+                <img class="avatar" src="/images/team/andrew-meckley.jpg" alt="Andrew Meckley" />
+                <h3>Andrew Meckley</h3>
+                <p class="muted">AI Mentor</p>
+            </div>
+            <div class="card person">
+                <img class="avatar" src="/images/team/angie-brand.jpg" alt="Angie Brand" />
+                <h3>Angie Brand</h3>
+                <p class="muted">Business Mentor</p>
+            </div>
+            <div class="card person">
+                <img class="avatar" src="/images/team/mike-brand.jpg" alt="Mike Brand" />
+                <h3>Mike Brand</h3>
+                <p class="muted">Technical Mentor</p>
             </div>
         </div>
     </div>

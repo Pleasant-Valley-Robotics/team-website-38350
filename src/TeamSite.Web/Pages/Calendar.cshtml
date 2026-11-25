@@ -2,20 +2,62 @@
 @{
     ViewData["Title"] = "Calendar";
 
-    // The team calendar. Each event is one line: its date (year, month, day), what it is, and where.
-    // To add an event, copy the example line, take the two slashes off the front, and change it.
+    // ======================================================================
+    // THE TEAM CALENDAR: the only part of this file you need to change.
+    //
+    // Each event is one line: its date (year, month, day), its kind, what it is, and where.
+    // The kind decides its color and which countdown it counts toward:
+    //     "comp"          a competition day (league meet, scrimmage, qualifier)
+    //     "championship"  the League Championship
+    //     "outreach"      an outreach event
+    //     "team"          anything else (build days, team milestones)
+    // To add an event, copy an example line, take the two slashes off the front, and change it.
     // No place yet? Write null instead of the place, without quotes.
-    // Events that have passed leave the page by themselves; the rest show soonest first.
-    var events = new (DateOnly Date, string Title, string? Place)[]
+    // ======================================================================
+    var events = new (DateOnly Date, string Kind, string Title, string? Place)[]
     {
-        // (new DateOnly(2026, 12, 5), "Event name", "Where it is"),
+        (new DateOnly(2026, 12, 12), "comp",         "Competition",            null),
+        (new DateOnly(2027, 1, 9),   "championship", "League Championship",    null),
+
+        // (new DateOnly(2026, 12, 5),  "comp",         "League Meet 1",          "Pleasant Valley High School"),
+        // (new DateOnly(2027, 2, 6),   "championship", "League Championship",    null),
+        // (new DateOnly(2026, 12, 12), "outreach",     "STEM night at the library", "Bettendorf Public Library"),
     };
-    var upcoming = events.Where(e => e.Date >= DateOnly.FromDateTime(DateTime.Now)).OrderBy(e => e.Date).ToList();
+
+    // ---- Everything below works by itself. ----
+
+    // "Today" in Iowa, not in the server's own time zone.
+    DateOnly today;
+    try { today = DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("America/Chicago"))); }
+    catch { today = DateOnly.FromDateTime(DateTime.UtcNow.AddHours(-6)); }
+
     var en = System.Globalization.CultureInfo.InvariantCulture;
+    var upcoming = events.Where(e => e.Date >= today).OrderBy(e => e.Date).ToList();
+    (DateOnly Date, string Kind, string Title, string? Place)? Next(string kind) =>
+        upcoming.Where(e => e.Kind == kind).Select(e => ((DateOnly, string, string, string?)?)e).FirstOrDefault();
+
+    var countdowns = new[]
+    {
+        (Kind: "comp",         Label: "Next competition",     Event: Next("comp")),
+        (Kind: "championship", Label: "League Championship",  Event: Next("championship")),
+        (Kind: "outreach",     Label: "Next outreach event",  Event: Next("outreach")),
+    };
+
+    // Which month the calendar shows: this month, or ?month=2027-01 from the arrows.
+    var first = new DateOnly(today.Year, today.Month, 1);
+    if (DateOnly.TryParseExact(Request.Query["month"].ToString() + "-01", "yyyy-MM-dd", en, System.Globalization.DateTimeStyles.None, out var asked)
+        && asked.Year is >= 2020 and <= 2100)
+        first = asked;
+    var prev = first.AddMonths(-1);
+    var next = first.AddMonths(1);
+    var gridStart = first.AddDays(-(int)first.DayOfWeek);           // the Sunday on or before the 1st
+    var weeks = (int)Math.Ceiling(((int)first.DayOfWeek + DateTime.DaysInMonth(first.Year, first.Month)) / 7.0);
+    var byDay = events.GroupBy(e => e.Date).ToDictionary(g => g.Key, g => g.ToList());
 }
 @*
     The calendar page: /calendar
     You only need to change the list of events at the top of this file.
+    The three countdowns and the month calendar fill themselves in from that list.
 *@
 
 <section class="page-hero">
@@ -28,30 +70,71 @@
 
 <section class="section">
     <div class="container">
-        @if (upcoming.Count == 0)
-        {
-            <div class="card empty">
-                <h2 class="h3">No events scheduled yet</h2>
-                <p class="muted">Check back soon, or follow us on Instagram and TikTok for updates.</p>
-            </div>
-        }
-        else
-        {
-            <ol class="events">
-                @foreach (var e in upcoming)
-                {
-                    <li class="card event">
-                        <time class="event-date" datetime="@e.Date.ToString("yyyy-MM-dd")">
-                            <span>@e.Date.ToString("MMM", en)</span>
-                            <strong>@e.Date.Day</strong>
-                        </time>
-                        <div>
-                            <h2 class="h3">@e.Title</h2>
-                            <p class="muted">@e.Date.ToString("dddd, MMMM d, yyyy", en)@(e.Place is null ? "" : " · " + e.Place)</p>
+        <div class="countdowns">
+            @foreach (var c in countdowns)
+            {
+                <div class="countdown countdown--@c.Kind">
+                    <span class="countdown-label">@c.Label</span>
+                    @if (c.Event is { } e)
+                    {
+                        var days = e.Date.DayNumber - today.DayNumber;
+                        <div class="countdown-number">
+                            @if (days == 0) { <strong>Today!</strong> }
+                            else { <strong>@days</strong><span>@(days == 1 ? "day to go" : "days to go")</span> }
                         </div>
-                    </li>
+                        <p class="countdown-what">@e.Title</p>
+                        <p class="countdown-when">@e.Date.ToString("dddd, MMMM d, yyyy", en)@(e.Place is null ? "" : " · " + e.Place)</p>
+                    }
+                    else
+                    {
+                        <div class="countdown-number"><strong class="countdown-soon">Date coming soon</strong></div>
+                        <p class="countdown-when">Check back, or follow us on Instagram and TikTok.</p>
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="cal card">
+            <div class="cal-head">
+                <a class="cal-nav" href="?month=@prev.ToString("yyyy-MM", en)" aria-label="Previous month">‹</a>
+                <h2 class="cal-title"><span class="cal-month">@first.ToString("MMMM yyyy", en)</span></h2>
+                <a class="cal-nav" href="?month=@next.ToString("yyyy-MM", en)" aria-label="Next month">›</a>
+            </div>
+            @if (first.Year != today.Year || first.Month != today.Month)
+            {
+                <p class="cal-today-link"><a href="/calendar">Back to this month</a></p>
+            }
+            <div class="cal-grid" role="grid" aria-label="@first.ToString("MMMM yyyy", en)">
+                @foreach (var d in new[] { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" })
+                {
+                    <div class="cal-dow" role="columnheader">@d</div>
                 }
-            </ol>
-        }
+                @for (var i = 0; i < weeks * 7; i++)
+                {
+                    var day = gridStart.AddDays(i);
+                    var cls = "cal-day";
+                    if (day.Month != first.Month) { cls += " cal-day--out"; }
+                    if (day == today) { cls += " cal-day--today"; }
+                    if (day < today) { cls += " cal-day--past"; }
+                    <div class="@cls" role="gridcell">
+                        <span class="cal-num">@day.Day</span>
+                        @if (byDay.TryGetValue(day, out var list))
+                        {
+                            foreach (var e in list)
+                            {
+                                <span class="cal-event cal-event--@e.Kind" title="@e.Title@(e.Place is null ? "" : " · " + e.Place)">@e.Title</span>
+                            }
+                        }
+                    </div>
+                }
+            </div>
+            <ul class="cal-legend">
+                <li><span class="dot dot--comp"></span>Competition</li>
+                <li><span class="dot dot--championship"></span>Championship</li>
+                <li><span class="dot dot--outreach"></span>Outreach</li>
+                <li><span class="dot dot--team"></span>Team</li>
+            </ul>
+        </div>
+
     </div>
 </section>
